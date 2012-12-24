@@ -9,13 +9,13 @@
     <string name="domingo_ramos">Domingo de Ramos</string>
     <string-array name="fechas_relevantes">
         <item >Miércoles de Ceniza</item>
-        <item>Vienes de dolor</item><item >Pentecostes</item>
-        
+        <item>Viernes de dolor</item>
+        <item >Pentecostes</item>
     </string-array>
     <integer-array name="desafes_fechas_relevantes">
         <item >-40</item>
-        
-        <item >-9</item><item>50</item>
+        <item >-9</item>
+        <item>50</item>
     </integer-array>
 
 </resources>
