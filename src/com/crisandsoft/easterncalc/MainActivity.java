@@ -23,6 +23,9 @@ public class MainActivity extends Activity
 
     Resources _res;
 
+    Integer[] _textAsResources = { R.string.miercoles_ceniza, R.string.viernes_dolor, R.string.Pentecostes};
+    Integer[] _adjustsFromSunday = { -46, -9, 50};
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -45,8 +48,9 @@ public class MainActivity extends Activity
             {
                 if (s.length() > 0)
                 {
-                    GregorianCalendar gregorianCalendar = getGoodSunday(Integer
-                            .parseInt(_yearEdit.getText().toString()));
+                    GregorianCalendar gregorianCalendar = // getGoodSunday(Integer
+                            getEasterDate(Integer
+                                    .parseInt(_yearEdit.getText().toString()));
                     getRelevantDates(gregorianCalendar);
                     gregorianCalendar = null;
                 }
@@ -73,20 +77,14 @@ public class MainActivity extends Activity
     public void getRelevantDates(GregorianCalendar goodSunday)
     {
 
-        String[] _resStringArray = _res
-                .getStringArray(R.array.fechas_relevantes);
-
-        int[] desfases_relevantes = _res
-                .getIntArray(R.array.desafes_fechas_relevantes);
-        GregorianCalendar cal_aux;
-        cal_aux = goodSunday;
         String textLine = getText(R.string.domingo_resurrecion) + " " + " "
-                + cal_aux.get(Calendar.DATE) + "/" + (cal_aux.get(Calendar.MONTH) + 1)
+                + goodSunday.get(Calendar.DATE) + "/" + (goodSunday.get(Calendar.MONTH) + 1)
                 + "\n";
 
-        int cuantas = _resStringArray.length;
+        int cuantas = _textAsResources.length;
 
         // now, we calculate the rest of values based on goodSunday
+        Calendar cal_aux=null;
         for (int cont = 0; cont < cuantas; cont++)
         {
             // if (Log.isLoggable(TAG, Log.DEBUG))
@@ -95,8 +93,8 @@ public class MainActivity extends Activity
             // + _resStringArray[cont] + "]");
             // }
             cal_aux = (GregorianCalendar) goodSunday.clone();
-            cal_aux.add(Calendar.DAY_OF_YEAR, desfases_relevantes[cont]);
-            textLine += _resStringArray[cont] + " "
+            cal_aux.add(Calendar.DAY_OF_YEAR, _adjustsFromSunday[cont]);
+            textLine += getText(_textAsResources[cont]) + " "
                     + cal_aux.get(Calendar.DATE) + "/"
                     + (cal_aux.get(Calendar.MONTH) + 1) + "\n";
             cal_aux = null; // liberamos
@@ -135,31 +133,31 @@ public class MainActivity extends Activity
         d = e >> 5;
         day = e - d * 31;
         month = d + 3;
-        if (Log.isLoggable(TAG, Log.DEBUG))
-        {
-            Log.d(TAG, "[" + target_year + "][" + month + "][" + day + "]");
-        }
+//        if (Log.isLoggable(TAG, Log.DEBUG))
+//        {
+//            Log.d(TAG, "[" + target_year + "][" + month + "][" + day + "]");
+//        }
 
         GregorianCalendar gregorianCalendar = new GregorianCalendar(target_year, month - 1, day); // los
         // meses
         // empiezan
         // en
         // 0
-        if (Log.isLoggable(TAG, Log.DEBUG))
-        {
-            Log.d(
-                    TAG,
-                    "fecha obtenida [" + gregorianCalendar.get(Calendar.DATE) + "]/["
-                            + gregorianCalendar.get(Calendar.MONTH) + "]");
-        }
+//        if (Log.isLoggable(TAG, Log.DEBUG))
+//        {
+//            Log.d(
+//                    TAG,
+//                    "fecha obtenida [" + gregorianCalendar.get(Calendar.DATE) + "]/["
+//                            + gregorianCalendar.get(Calendar.MONTH) + "]");
+//        }
         // get sunday
         gregorianCalendar.add(Calendar.DAY_OF_YEAR, 2);
-        if (Log.isLoggable(TAG, Log.DEBUG))
-        {
-            Log.d(TAG,
-                    "ajuste [" + gregorianCalendar.get(Calendar.DATE) + "]/[" + gregorianCalendar.get(Calendar.MONTH)
-                            + "]");
-        }
+//        if (Log.isLoggable(TAG, Log.DEBUG))
+//        {
+//            Log.d(TAG,
+//                    "ajuste [" + gregorianCalendar.get(Calendar.DATE) + "]/[" + gregorianCalendar.get(Calendar.MONTH)
+//                            + "]");
+//        }
         return gregorianCalendar;
     }
 

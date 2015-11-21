@@ -6,8 +6,9 @@
     <string name="menu_settings">Settings</string>
     <string name="calcular">Calcular</string>
     <string name="indique_anno">Indique el año</string>
-    <string name="domingo_resurrecion">Domingo de Ramos</string>
+    <string name="domingo_resurrecion">Domingo de Resurreción</string>
     <string-array name="fechas_relevantes">
+        <item></item>
         <item >Miércoles de Ceniza</item>
         <item>Viernes de dolor</item>
         <item >Pentecostes</item>
@@ -17,5 +18,8 @@
         <item >-9</item>
         <item>50</item>
     </integer-array>
+    <string name="miercoles_ceniza">Miércoles de Ceniza</string>
+    <string name="viernes_dolor">Viernes de Dolor</string>
+    <string name="Pentecostes">Pentecostés</string>
 
 </resources>
