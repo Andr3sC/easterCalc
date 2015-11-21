@@ -1,11 +1,8 @@
 package com.crisandsoft.easterncalc;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Vector;
 
-import android.net.http.SslCertificate;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.res.Resources;
@@ -13,137 +10,185 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity
-	{
+{
 
-		private static final String TAG = "CRISANDSOFT";
+    private static final String TAG = "CRISANDSOFT";
 
-		TextView _zona_texto;
-		EditText _seleccion_anno;
+    TextView _textView;
+    EditText _yearEdit;
 
-		Resources _res;
+    Resources _res;
 
-		@Override
-		protected void onCreate(Bundle savedInstanceState)
-			{
-				super.onCreate(savedInstanceState);
-				setContentView(R.layout.activity_main);
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-				_zona_texto = (TextView) findViewById(R.id.textView1);
-				_seleccion_anno = (EditText) findViewById(R.id.editText1);
+        _textView = (TextView) findViewById(R.id.textView1);
+        _yearEdit = (EditText) findViewById(R.id.editText1);
 
-				_seleccion_anno.addTextChangedListener(new TextWatcher()
-					{
-						public void beforeTextChanged(CharSequence s, int start, int count,
-								int after)
-							{
-								// no nos interesa esa callback
-							}
+        _yearEdit.addTextChangedListener(new TextWatcher()
+        {
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after)
+            {
+                // Not interested in this callback
+            }
 
-						public void onTextChanged(CharSequence s, int start, int before,
-								int count)
-							{
-								if (s.length() > 0)
-									{
-										GregorianCalendar greg = calcular_domingo_resurrecion(Integer
-												.parseInt(_seleccion_anno.getText().toString()));
-										poblar_fechas(greg);
-										greg=null;
-									}
-								
-							}
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count)
+            {
+                if (s.length() > 0)
+                {
+                    GregorianCalendar gregorianCalendar = getGoodSunday(Integer
+                            .parseInt(_yearEdit.getText().toString()));
+                    getRelevantDates(gregorianCalendar);
+                    gregorianCalendar = null;
+                }
 
-						public void afterTextChanged(Editable S)
-							{
-								// no nos interesa esa callback
-							}
-					});
-				_res = this.getResources();
+            }
 
-			}
+            public void afterTextChanged(Editable S)
+            {
+                // Not intersested
+            }
+        });
+        _res = this.getResources();
 
-		public void poblar_fechas(GregorianCalendar domingo_resurreccion)
-			{
+    }
 
-				String[] fechas_relevantes = _res
-						.getStringArray(R.array.fechas_relevantes);
+    /**
+     * Get all the relevant dates.
+     * <p>
+     * They are calculated based on goodSunday.
+     * </p>
+     *
+     * @param goodSunday Pivot around which we will calc
+     */
+    public void getRelevantDates(GregorianCalendar goodSunday)
+    {
 
-				int[] desfases_relevantes = _res
-						.getIntArray(R.array.desafes_fechas_relevantes);
-				GregorianCalendar cal_aux;
-				cal_aux = domingo_resurreccion;
-				String linea_texto = getText(R.string.domingo_ramos) + " " + " "
-						+ cal_aux.get(Calendar.DATE) + "/" + (cal_aux.get(Calendar.MONTH) +1)
-						+ "\n";
+        String[] _resStringArray = _res
+                .getStringArray(R.array.fechas_relevantes);
 
-				int cuantas = fechas_relevantes.length;
+        int[] desfases_relevantes = _res
+                .getIntArray(R.array.desafes_fechas_relevantes);
+        GregorianCalendar cal_aux;
+        cal_aux = goodSunday;
+        String textLine = getText(R.string.domingo_resurrecion) + " " + " "
+                + cal_aux.get(Calendar.DATE) + "/" + (cal_aux.get(Calendar.MONTH) + 1)
+                + "\n";
 
-				for (int cont = 0; cont < cuantas; cont++)
-					{
-						// if (Log.isLoggable(TAG, Log.DEBUG))
-						// {
-						// Log.d(TAG, "[" + cont + "][" + desfases_relevantes[cont] + "]["
-						// + fechas_relevantes[cont] + "]");
-						// }
-						cal_aux = (GregorianCalendar) domingo_resurreccion.clone();
-						cal_aux.add(Calendar.DAY_OF_YEAR, desfases_relevantes[cont]);
-						linea_texto += fechas_relevantes[cont] + " "
-								+ cal_aux.get(Calendar.DATE) + "/"
-								+ (cal_aux.get(Calendar.MONTH)+1) + "\n";
-						cal_aux = null; // liberamos
-					}
-				_zona_texto.setText(linea_texto);
+        int cuantas = _resStringArray.length;
 
-			}
+        // now, we calculate the rest of values based on goodSunday
+        for (int cont = 0; cont < cuantas; cont++)
+        {
+            // if (Log.isLoggable(TAG, Log.DEBUG))
+            // {
+            // Log.d(TAG, "[" + cont + "][" + desfases_relevantes[cont] + "]["
+            // + _resStringArray[cont] + "]");
+            // }
+            cal_aux = (GregorianCalendar) goodSunday.clone();
+            cal_aux.add(Calendar.DAY_OF_YEAR, desfases_relevantes[cont]);
+            textLine += _resStringArray[cont] + " "
+                    + cal_aux.get(Calendar.DATE) + "/"
+                    + (cal_aux.get(Calendar.MONTH) + 1) + "\n";
+            cal_aux = null; // liberamos
+        }
+        _textView.setText(textLine);
 
-		@Override
-		public boolean onCreateOptionsMenu(Menu menu)
-			{
-				// Inflate the menu; this adds items to the action bar if it is
-				// present.
-				getMenuInflater().inflate(R.menu.activity_main, menu);
-				return true;
-			}
+    }
 
-		public GregorianCalendar calcular_domingo_resurrecion(int anno)
-			{
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate the menu; this adds items to the action bar if it is
+        // present.
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
 
-				int a, b, c, d, e, day, month;
+    /**
+     * Find out the date of Good Sunday for a given year
+     *
+     * @param target_year which year are we interested in?
+     * @return GoodSunday
+     */
+    public GregorianCalendar getGoodSunday(int target_year)
+    {
 
-				a = anno % 19;
-				b = anno >> 2;
-				c = b;// 25 + 1
-				d = (c * 3) >> 2;
-				e = ((a * 19) - ((c * 8 + 5) / 25) + d + 15) % 30;
-				e += (29578 - a - e * 32) >> 10;
-				e -= ((anno % 7) + b - d + e + 2) % 7;
-				d = e >> 5;
-				day = e - d * 31;
-				month = d + 3;
+        int a, b, c, d, e, day, month;
 
-				Log.d(TAG, "[" + anno + "][" + month + "][" + day + "]");
+        a = target_year % 19;
+        b = target_year >> 2;
+        c = b;// 25 + 1
+        d = (c * 3) >> 2;
+        e = ((a * 19) - ((c * 8 + 5) / 25) + d + 15) % 30;
+        e += (29578 - a - e * 32) >> 10;
+        e -= ((target_year % 7) + b - d + e + 2) % 7;
+        d = e >> 5;
+        day = e - d * 31;
+        month = d + 3;
+        if (Log.isLoggable(TAG, Log.DEBUG))
+        {
+            Log.d(TAG, "[" + target_year + "][" + month + "][" + day + "]");
+        }
 
-				GregorianCalendar dr = new GregorianCalendar(anno, month - 1, day); // los
-																																						// meses
-																																						// empiezan
-																																						// en
-																																						// 0
-				Log.d(
-						TAG,
-						"fecha obtenida [" + dr.get(Calendar.DATE) + "]/["
-								+ dr.get(Calendar.MONTH) + "]");
-				// get sunday
-				dr.add(Calendar.DAY_OF_YEAR, 2);
-				Log.d(TAG,
-						"ajuste [" + dr.get(Calendar.DATE) + "]/[" + dr.get(Calendar.MONTH)
-								+ "]");
-				return dr;
-			}
+        GregorianCalendar gregorianCalendar = new GregorianCalendar(target_year, month - 1, day); // los
+        // meses
+        // empiezan
+        // en
+        // 0
+        if (Log.isLoggable(TAG, Log.DEBUG))
+        {
+            Log.d(
+                    TAG,
+                    "fecha obtenida [" + gregorianCalendar.get(Calendar.DATE) + "]/["
+                            + gregorianCalendar.get(Calendar.MONTH) + "]");
+        }
+        // get sunday
+        gregorianCalendar.add(Calendar.DAY_OF_YEAR, 2);
+        if (Log.isLoggable(TAG, Log.DEBUG))
+        {
+            Log.d(TAG,
+                    "ajuste [" + gregorianCalendar.get(Calendar.DATE) + "]/[" + gregorianCalendar.get(Calendar.MONTH)
+                            + "]");
+        }
+        return gregorianCalendar;
+    }
 
-	}
+    /**
+     * Get the Good Sunday ( easternSunday )
+     * <p>
+     *     fetched from https://en.wikipedia.org/wiki/Computus
+     * </p>
+     * @param year which year re we interested in?
+     * @return easter Sunday as calendar
+     */
+    public GregorianCalendar getEasterDate(int year) {
+        int a = year % 19;
+        int b = year / 100;
+        int c = year % 100;
+        int d = b / 4;
+        int e = b % 4;
+        int f = (b + 8) / 25;
+        int g = (b - f + 1) / 3;
+        int h = (19 * a + b - d - g + 15) % 30;
+        int i = c / 4;
+        int k = c % 4;
+        int l = (32 + 2 * e + 2 * i - h - k) % 7;
+        int m = (a + 11 * h + 22 * l) / 451;
+        int n = (h + l - 7 * m + 114) / 31;
+        int p = (h + l - 7 * m + 114) % 31;
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        gregorianCalendar.set(year,n-1, p+1);
+        return gregorianCalendar;
+    }
+
+}
